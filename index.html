@@ -2,10 +2,8 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Campus UCE - Visualización</title>
+  <title>Campus UCE</title>
   <style>
-    /* Estilos generales del body y título */
     body {
       margin: 0;
       font-family: sans-serif;
@@ -21,235 +19,303 @@
       font-size: 32px;
     }
 
-    /* Contenedor de botones */
-    .button-container {
-      text-align: center;
-      margin: 10px 0 0 0;
-    }
-
-    /* Estilos de los botones */
-    button {
-      margin: 0 10px;
-      padding: 8px 20px;
-      font-size: 16px;
-      cursor: pointer;
-      border-radius: 6px;
-      border: 1.5px solid #222;
-      background-color: white;
-      transition: background-color 0.3s ease;
-    }
-
-    /* Cambio de color al pasar el mouse sobre el botón */
-    button:hover {
-      background-color: #ddd;
-    }
-
-    /* Botón activo con fondo oscuro y texto blanco */
-    button.active {
-      background-color: #222;
-      color: white;
-    }
-
-    /* Contenedor principal con flexbox: el canvas y el panel info lado a lado */
     .container {
       display: flex;
       justify-content: center;
-      align-items: flex-start;
-      gap: 20px;
+      align-items: flex-start; /* Para que el panel lateral quede arriba alineado */
+      gap: 20px; /* Separación entre imagen y panel */
       padding: 20px;
     }
 
-    /* Contenedor del canvas con fondo negro y tamaño fijo */
+    /* Recuadro para el canvas (imagen + nodos) */
     .canvas-wrapper {
       background-color: #000;
-      width: 750px;
-      height: 400px;
+      width: 750px;    /* Ajustado para que sea más pequeño */
+      height: 400px;   /* Relación de aspecto 985x442 redimensionado */
       position: relative;
       overflow: hidden;
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-      border: 2px solid black;
-      flex-shrink: 0; /* No permitir que se reduzca su tamaño */
+      border: 2px solid black; /* Borde negro */
+      flex-shrink: 0; /* No se reduzca */
     }
 
-    /* Canvas absolutamente posicionado dentro del contenedor para poder desplazar y escalar */
     canvas {
       position: absolute;
       left: 0;
       top: 0;
-      user-select: none; /* No permitir selección de texto al arrastrar */
+      user-select: none;
     }
 
-    /* Panel de información a la derecha del canvas */
+    /* Panel lateral para mostrar info del nodo */
     .info-panel {
       width: 300px;
       background: white;
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(0,0,0,0.3);
-      border: 2px solid black;
+      border: 2px solid black; /* Borde negro */
       padding: 15px;
       font-size: 14px;
       color: #222;
       line-height: 1.4;
-      user-select: text; /* Permitir selección de texto aquí */
+      user-select: text;
     }
 
-    /* Imagen dentro del panel info, oculta por defecto */
     .info-panel img {
       max-width: 100%;
       margin-bottom: 10px;
       border-radius: 8px;
-      display: none;
+      display: none; /* Oculto inicialmente */
     }
 
-    /* Título dentro del panel */
     .info-panel h2 {
       margin-top: 0;
       font-size: 18px;
     }
 
-    /* Lista de carreras dentro del panel */
     .info-panel ul {
       padding-left: 20px;
       margin-top: 5px;
     }
 
-    @media (max-width: 768px) {
-  h1 {
-    font-size: 24px;
-    padding: 15px 0;
-  }
+    .modo-btn {
+      background-color: white;
+      color: black;
+      border: 1px solid #333;
+      padding: 10px 20px;
+      margin: 0 5px;
+      font-size: 14px;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: 'Segoe UI', sans-serif;
+      transition: all 0.3s ease;
+    }
 
-  .button-container {
-    flex-wrap: wrap;
-    padding: 0 10px;
-  }
+    .modo-btn:hover {
+      background-color: #f0f0f0;
+    }
 
-  .button-container button {
-    margin: 5px 5px;
-    font-size: 14px;
-    padding: 6px 12px;
-  }
-
-  .container {
-    flex-direction: column;
-    padding: 10px;
-    gap: 15px;
-  }
-
-  .canvas-wrapper {
-    width: 100%;
-    height: 300px;
-    border-radius: 8px;
-  }
-
-  .info-panel {
-    width: 100%;
-    font-size: 13px;
-    overflow-y: auto;
-    max-height: 300px;
-    padding: 10px;
-    border-radius: 8px;
-  }
-
-  .info-panel h2 {
-    font-size: 16px;
-  }
-
-  .info-panel ul {
-    padding-left: 18px;
-  }
-
-  #btn-calcular-ruta {
-    padding: 6px 0;
-    font-size: 14px;
-  }
-}
+    .modo-btn.active {
+      background-color: black;
+      color: white;
+      border: 1px solid black;
+    }
 
   </style>
-  </head>
-  <body>
-    <h1>Campus Universidad Central del Ecuador</h1>
+</head>
+<body>
+  <h1>CAMPUS UCE</h1>
 
-    <!-- Solo botones necesarios -->
-    <div class="button-container">
-      <button id="btn-original" class="active">Facultades UCE</button>
-      <button id="btn-subnodos">Encuentra tu facultad :D</button>
+  <div id="modoSelector" style="text-align: center; margin: 1rem 0;">
+    <button id="btnFacultades" class="modo-btn active">Facultades UCE</button>
+    <button id="btnEncuentra" class="modo-btn">Encuentra tu facultad :D</button>
+  </div>
+
+  <div class="container">
+    <div class="canvas-wrapper" id="canvas-container">
+      <canvas id="canvas"></canvas>
     </div>
-
-    <div class="container">
-      <div class="canvas-wrapper" id="canvas-container">
-        <canvas id="canvas"></canvas>
-      </div>
-
-      <div id="info-panel" class="info-panel">
-        <div id="ruta-panel" style="margin-top: 20px; display: none; border-top: 1px solid #ccc; padding-top: 15px;">
-          <label for="select-origen"><strong>Origen:</strong></label><br>
-          <select id="select-origen" style="width: 100%; margin-bottom: 10px;"></select>
-
-          <label for="select-destino"><strong>Destino:</strong></label><br>
-          <select id="select-destino" style="width: 100%; margin-bottom: 10px;"></select>
-          <p id="tiempo-ruta" style="font-weight: bold; margin-bottom: 10px; display: none;"></p>
-          <button id="btn-calcular-ruta" style="width: 100%; background-color: #222; color: white; border-radius: 6px; padding: 8px 0;">
-            Generar ruta
-          </button>
-        </div>
-
-        <h2 id="panel-title">Selecciona un nodo</h2>
-        <img id="panel-image" src="" alt="Imagen Facultad" />
-        <p id="panel-info"></p>
-        <div id="panel-carreras"></div>
-      </div>
+  
+    <!-- Panel lateral fijo para la info -->
+    <div id="info-panel" class="info-panel">
+      <h2 id="panel-title">Selecciona un nodo</h2>
+      <img id="panel-image" src="" alt="Imagen Facultad" />
+      <p id="panel-info"></p>
+      <div id="panel-carreras"></div>
     </div>
+  </div>
 
-    <script>
-      // Variables DOM
-      let ultimaRuta = [];
-      const rutaPanel = document.getElementById('ruta-panel');
-      const selectOrigen = document.getElementById('select-origen');
-      const selectDestino = document.getElementById('select-destino');
-      const btnCalcularRuta = document.getElementById('btn-calcular-ruta');
+  <script>
+    let currentMode = 'facultades'; // 'campus' o 'rutas'
+    document.getElementById('btnFacultades').addEventListener('click', () => {
+      setActiveMode('facultades');
+    });
+    document.getElementById('btnEncuentra').addEventListener('click', () => {
+      setActiveMode('encuentra');
+    });
 
-      const canvas = document.getElementById('canvas');
-      const container = document.getElementById('canvas-container');
-      const ctx = canvas.getContext('2d');
+    function setActiveMode(mode) {
+      if (currentMode === mode) return;
 
-      const panelTitle = document.getElementById('panel-title');
-      const panelInfo = document.getElementById('panel-info');
-      const panelCarreras = document.getElementById('panel-carreras');
-      const panelImage = document.getElementById('panel-image');
+      currentMode = mode;
 
-      const btnOriginal = document.getElementById('btn-original');
-      const btnSubnodos = document.getElementById('btn-subnodos');
+      if (mode === 'facultades') {
+        loadData('campus.json');
+      } else {
+        loadData('rutas.json');
+      }
 
-      // Variables para nodos y aristas
-      let nodesOriginal = [];
-      let edgesOriginal = [];
-      let nodesSubnodos = [];
-      let edgesSubnodos = [];
+      document.querySelectorAll('.modo-btn').forEach(btn => btn.classList.remove('active'));
+      if (mode === 'facultades') {
+        document.getElementById('btnFacultades').classList.add('active');
+      } else {
+        document.getElementById('btnEncuentra').classList.add('active');
+      }
 
-      let currentNodes = [];
-      let currentEdges = [];
+      resetCanvasState();
+    }
 
-      let image = new Image();
-      image.src = 'fondo.jpg';
+    function resetCanvasState() {
+      nodes = [];
+      edges = [];
+      subnodes = [];
+      routePath = [];
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // Puedes también reiniciar variables relacionadas con Dijkstra si es necesario
+    }
+    const canvas = document.getElementById('canvas');
+    const container = document.getElementById('canvas-container');
+    const ctx = canvas.getContext('2d');
 
-      // Variables zoom y pan
-      let scale = 1, minScale = 1, maxScale = 2;
-      let offsetX = 0, offsetY = 0;
-      let isDragging = false, startDrag = { x: 0, y: 0 };
-      let selectedNode = null;
+    const panelTitle = document.getElementById('panel-title');
+    const panelInfo = document.getElementById('panel-info');
+    const panelCarreras = document.getElementById('panel-carreras');
+    const panelImage = document.getElementById('panel-image');
 
-    let draggingSubnode = null;  // Nodo subnodo que se está arrastrando
-    let dragOffset = { x: 0, y: 0 }; // Offset entre click y el centro del nodo
+    let nodes = [];
+    let edges = [];
+    let image = new Image();
+    let modoActual = 'facultades'; // 'facultades' o 'encuentra'
+    let nodos = [];
+    let aristas = [];
 
-    // Posiciones fijas predefinidas para nodos originales, por id
+    image.src = 'fondo.jpg';  // Solo una imagen ahora
+
+    let scale = 1;
+    let minScale = 1;
+    let maxScale = 2;  // 200% zoom max
+    let offsetX = 0;
+    let offsetY = 0;
+    let isDragging = false;
+    let startDrag = { x: 0, y: 0 };
+    let selectedNode = null;
+
+    const fixedSubnodePositions = {
+      23: {x: 863 , y: 134 },
+      24: {x: 455 , y: 277 },
+      25: {x: 466 , y: 295 },
+      26: {x: 455 , y: 277},
+      27: {x: 512 , y: 249 },
+      28: {x: 552 , y: 228 },
+      29: {x: 595 , y: 206 },
+      30: {x: 455 , y: 277 },
+      31: {x: 466 , y: 295 },
+      32: {x: 664 , y: 188 },
+      33: {x: 595 , y: 206 },
+      34: {x: 644 , y: 262},
+      35: {x: 620 , y: 271},
+      36: {x: 592  , y: 279 },
+      37: {x:591  , y: 250},
+      38: {x: 542 , y: 71 },      
+      39: {x: 544 , y: 88 },      
+      40: {x: 678 , y: 70  },           
+      42: {x: 544 , y: 88 },      
+      43: {x: 831 , y: 329 },
+      44: {x: 833 , y: 285 },
+      45: {x: 853 , y: 263 },
+      46: {x: 839 , y: 231 },
+      47: {x: 768 , y: 347 },
+      48: {x: 765 , y: 304 },
+      49: {x: 764 , y: 264 },
+      50: {x: 747 , y: 257 },
+      51: {x: 725 , y: 252 },
+      52: {x: 699 , y: 264 },
+      53: {x: 662 , y: 270 },
+      54: {x: 615 , y: 287 },
+      55: {x: 588 , y: 296 },
+      56: {x:553, y: 309},
+      57: {x: 522 , y: 316 },
+      58: {x: 495 , y: 333 },
+      59: {x: 481 , y: 367 },
+      60: {x: 768 , y: 347 },
+      61: {x: 764 , y: 264 },
+      62: {x: 748 , y: 226 },
+      63: {x: 725 , y: 211},
+      64: {x: 694, y: 232},
+      65: {x: 820 , y: 156 },
+      66: {x: 801 , y: 142 },
+      67: {x: 790 , y: 127 },
+      68: {x: 773 , y: 114 },
+      69: {x: 753 , y: 106 },
+      70: {x: 727 , y: 118 },
+      71: {x: 708 , y: 103  },      
+      72: {x: 545 , y: 297 },
+      73: {x: 520 , y: 303 },
+      74: {x: 496 , y: 313},
+      75: {x: 595 , y: 206},
+      76: {x: 592 , y: 227 },
+      77: {x:591  , y: 250},
+      78: {x: 593 , y: 152 },
+      79: {x: 551 , y: 128 },
+      80: {x: 544 , y: 88 },
+      81: {x: 593 , y: 152 },
+      82: {x: 650 , y: 149 },
+      83: {x: 593 , y: 152 },
+      84: {x: 611 , y: 129 },
+      85: {x: 619 , y: 104 },
+      86: {x: 835, y: 144 },
+      87: {x: 288 , y: 194 },
+      88: {x: 324 , y: 211 },
+      89: {x: 351 , y: 226 },
+      90: {x: 382 , y: 234 },
+      91: {x: 410 , y: 239 },
+      92: {x: 432 , y: 245 },
+      93: {x: 249 , y: 239 },
+      94: {x: 272 , y: 246 },
+      95: {x: 309 , y: 254 },
+      96: {x: 327 , y: 277 },
+      97: {x: 348 , y: 295 },
+      98: {x: 369 , y: 292 },
+      99: {x: 402, y: 318},
+      100: {x: 288 , y: 194 },
+      101: {x: 324 , y: 211},
+      102: {x: 352 , y: 208},
+      103: {x: 374 , y: 199},
+      104: {x: 416 , y: 171},
+      105: {x: 419 , y: 124},
+      106: {x: 446 , y: 123},
+      107: {x: 455 , y: 112 },      
+      108: {x: 459 , y: 66 },      
+      109: {x: 793 , y: 201},
+      110: {x: 764 , y: 206},
+      111: {x: 725 , y: 211},
+      112: {x: 694, y: 232},
+      113: {x: 862 , y: 195},
+      114: {x: 897 , y: 193},
+      115: {x: 921 , y: 171},
+      116: {x: 862 , y: 195},
+      117: {x: 496 , y: 313},
+      118: {x: 620 , y: 271},
+      119: {x: 644 , y: 262},
+      120: {x: 67 , y: 71  },     
+      121: {x: 107 , y: 114 },      
+      122: {x: 116 , y: 144 },      
+      123: {x: 173 , y: 127},
+      124: {x: 172 , y: 144},
+      125: {x: 213 , y: 157},
+      126: {x: 249  , y: 170},
+      127: {x: 246 , y: 203},
+      128: {x: 921 , y: 171},
+      129: {x: 897 , y: 193},
+      130: {x: 820 , y: 68 },      
+      131: {x: 820 , y: 68 },      
+      132: {x: 794 , y: 54 },      
+      133: {x: 758 , y: 41 },      
+      134: {x: 741 , y: 69 },      
+      135: {x: 544 , y: 88 },      
+      136: {x: 897 , y: 193},
+      137: {x: 897 , y: 193},
+      138: {x: 862 , y: 195},
+    };
+
+    // Posiciones de los nodos en el lienzo (ajusta según tu imagen)
     const posiciones = {
       1: { x: 863, y: 157 },
       2: { x: 444, y: 258 },
       3: { x: 660, y: 238 },
       4: { x: 516, y: 56 },
-      5: { x: 649, y: 68 },
+      5: { x: 625 , y: 82 },
       6: { x: 584, y: 84 },
       7: { x: 702, y: 85 },
       8: { x: 816, y: 359 },
@@ -266,110 +332,57 @@
       19: { x: 950, y: 140 },
       20: { x: 829, y: 48 },
       21: { x: 538, y: 23},
-      22: { x: 927, y: 204}
+      22: { x: 927, y: 204} 
     };
 
-    // Ajustar tamaño del canvas al tamaño del contenedor y dibujar
+    // Ajusta canvas tamaño y dibuja
     function resizeCanvas() {
       canvas.width = container.clientWidth;
       canvas.height = container.clientHeight;
       draw();
     }
-    // Escuchar evento de redimensionar ventana
     window.addEventListener('resize', resizeCanvas);
 
-    // Eventos para arrastrar el canvas (pan)
+    // Eventos para drag
     container.addEventListener('mousedown', e => {
-    const rect = canvas.getBoundingClientRect();
-    const x = (e.clientX - rect.left - offsetX) / scale;
-    const y = (e.clientY - rect.top - offsetY) / scale;
-
-    draggingSubnode = null;
-    for (let node of currentNodes) {
-      if (node.isSubnodo) {
-        const dx = node.x - x;
-        const dy = node.y - y;
-        if (Math.sqrt(dx * dx + dy * dy) < 10) {
-          draggingSubnode = node;
-          dragOffset.x = x - node.x;
-          dragOffset.y = y - node.y;
-          break;
-        }
-      }
-    }
-
-    if (!draggingSubnode) {
       isDragging = true;
       startDrag.x = e.clientX - offsetX;
       startDrag.y = e.clientY - offsetY;
-    }
-  });
+    });
+
     container.addEventListener('mouseup', () => {
-    if (draggingSubnode) {
-      //guardarPosicionesSubnodos();
-    }
-    draggingSubnode = null;
-    isDragging = false;
-  });
+      isDragging = false;
+    });
 
     container.addEventListener('mouseleave', () => {
-    if (draggingSubnode) {
-      //guardarPosicionesSubnodos();
-    }
-    draggingSubnode = null;
-    isDragging = false;
-  });
+      isDragging = false;
+    });
 
     container.addEventListener('mousemove', e => {
-    const rect = canvas.getBoundingClientRect();
-    const x = (e.clientX - rect.left - offsetX) / scale;
-    const y = (e.clientY - rect.top - offsetY) / scale;
-
-    if (draggingSubnode) {
-      // Actualizar la posición del subnodo
-      draggingSubnode.x = x - dragOffset.x;
-      draggingSubnode.y = y - dragOffset.y;
-      draw();
-    }
-     else if (isDragging) {
-      offsetX = e.clientX - startDrag.x;
-      offsetY = e.clientY - startDrag.y;
-      clampOffset();
-      draw();
-    }
-  });
-
-    function guardarPosicionesSubnodos() {
-    const posicionesGuardadas = {};
-    nodesSubnodos.forEach(node => {
-      if (node.isSubnodo) {
-        posicionesGuardadas[node.id] = { x: node.x, y: node.y };
+      if (isDragging) {
+        offsetX = e.clientX - startDrag.x;
+        offsetY = e.clientY - startDrag.y;
+        clampOffset();
+        draw();
       }
     });
-    localStorage.setItem('posicionesSubnodos', JSON.stringify(posicionesGuardadas));
-  }
 
-    // Evento para zoom con rueda del mouse
+    // Zoom con la rueda del mouse
     container.addEventListener('wheel', e => {
       e.preventDefault();
-
       const rect = canvas.getBoundingClientRect();
-
-      // Coordenadas del mouse en relación a la imagen sin zoom y offset
+      const zoomFactor = 0.1;
       const mouseX = (e.clientX - rect.left - offsetX) / scale;
       const mouseY = (e.clientY - rect.top - offsetY) / scale;
 
-      const zoomFactor = 0.1;
       if (e.deltaY < 0) {
-        scale *= 1 + zoomFactor; // Zoom in
+        scale *= 1 + zoomFactor;
       } else {
-        scale *= 1 - zoomFactor; // Zoom out
+        scale *= 1 - zoomFactor;
       }
 
-      // Limitar escala
       scale = Math.min(maxScale, Math.max(minScale, scale));
 
-      // Ajustar offset para que el zoom sea centrado en el cursor
       offsetX = e.clientX - rect.left - mouseX * scale;
       offsetY = e.clientY - rect.top - mouseY * scale;
 
@@ -377,7 +390,7 @@
       draw();
     });
 
-    // Limita el desplazamiento para que la imagen no quede fuera del canvas
+    // Limitar el arrastre para no sacar la imagen fuera del canvas
     function clampOffset() {
       const maxOffsetX = 0;
       const maxOffsetY = 0;
@@ -388,51 +401,31 @@
       offsetY = Math.min(maxOffsetY, Math.max(minOffsetY, offsetY));
     }
 
-    // Función para dibujar toda la escena: imagen, aristas y nodos
+    // Dibuja todo
     function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.save();
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.save();
+      ctx.translate(offsetX, offsetY);
+      ctx.scale(scale, scale);
 
-    ctx.translate(offsetX, offsetY);
-    ctx.scale(scale, scale);
+      // Fondo
+      ctx.drawImage(image, 0, 0);
 
-    ctx.drawImage(image, 0, 0);
+      // 🔵 Aristas normales
+      edges.forEach(edge => {
+        const from = nodes.find(n => n.id === edge.from);
+        const to = nodes.find(n => n.id === edge.to);
+        if (!from || !to) return;
 
-    // Dibuja aristas pequeñas (subaristas)
-    ctx.strokeStyle = '#0066cc';
-    ctx.lineWidth = 2;
-    currentEdges.forEach(edge => {
-      const from = currentNodes.find(n => n.id === edge.from);
-      const to = currentNodes.find(n => n.id === edge.to);
-      if (from && to) {
         ctx.beginPath();
         ctx.moveTo(from.x, from.y);
         ctx.lineTo(to.x, to.y);
+        ctx.strokeStyle = '#0066cc';
+        ctx.lineWidth = 2;
         ctx.stroke();
-      }
-    });
 
-    // En modo subnodos, dibuja etiquetas totales con aristas originales
-    if (btnSubnodos.classList.contains('active')) {
-      edgesOriginal.forEach(edge => {
-        const from = currentNodes.find(n => n.id === edge.from && !n.isSubnodo);
-        const to = currentNodes.find(n => n.id === edge.to && !n.isSubnodo);
-        if (from && to && edge.time) {
-          const midX = (from.x + to.x) / 2;
-          const midY = (from.y + to.y) / 2;
-          ctx.fillStyle = 'black';
-          ctx.font = '14px Arial';
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          //ctx.fillText(edge.time, midX, midY);
-        }
-      });
-    } else {
-      // Modo original dibuja etiquetas normales
-      currentEdges.forEach(edge => {
-        const from = currentNodes.find(n => n.id === edge.from);
-        const to = currentNodes.find(n => n.id === edge.to);
-        if (from && to && edge.time) {
+        // Texto de tiempo
+        if (edge.time) {
           const midX = (from.x + to.x) / 2;
           const midY = (from.y + to.y) / 2;
           ctx.fillStyle = 'black';
@@ -442,643 +435,335 @@
           ctx.fillText(edge.time, midX, midY);
         }
       });
-    }
 
-    // Dibuja nodos igual que antes
-    currentNodes.forEach(node => {
-      ctx.beginPath();
-      if(node.isSubnodo) {
-        ctx.fillStyle = 'red';
-        ctx.arc(node.x, node.y, 5, 0, Math.PI * 2);
-      } else {
-        ctx.fillStyle = (node === selectedNode) ? 'blue' : 'black';
-        ctx.arc(node.x, node.y, 8, 0, Math.PI * 2);
-      }
-      ctx.fill();
-
-      if(!node.isSubnodo) {
-        ctx.fillStyle = 'yellow';
-        ctx.font = '12px Arial';
-        ctx.fillText(node.id, node.x, node.y + 4);
-      }
-    });
-    // Dibuja nodos
-      currentNodes.forEach(node => {
-        ctx.beginPath();
-        if(node.isSubnodo) {
-          ctx.fillStyle = 'red';
-          ctx.arc(node.x, node.y, 5, 0, Math.PI * 2);
-        } else {
-          ctx.fillStyle = (node === selectedNode) ? 'blue' : 'black';
-          ctx.arc(node.x, node.y, 8, 0, Math.PI * 2);
-        }
-        ctx.fill();
-
-        if(!node.isSubnodo) {
-          ctx.fillStyle = 'yellow';
-          ctx.font = '12px Arial';
-          ctx.fillText(node.id, node.x, node.y + 4);
-        }
-      });
-
-      // Dibuja ruta generada en verde si existe
-      if (ultimaRuta.length > 1) {
+      // ✅ Ruta verde por encima
+      if (routePath.length > 1) {
         ctx.strokeStyle = 'green';
         ctx.lineWidth = 4;
-        ctx.beginPath();
-        for (let i = 0; i < ultimaRuta.length - 1; i++) {
-          const from = currentNodes.find(n => n.id == ultimaRuta[i]);
-          const to = currentNodes.find(n => n.id == ultimaRuta[i + 1]);
+        for (let i = 0; i < routePath.length - 1; i++) {
+          const from = nodes.find(n => n.id === routePath[i]);
+          const to = nodes.find(n => n.id === routePath[i + 1]);
           if (from && to) {
+            ctx.beginPath();
             ctx.moveTo(from.x, from.y);
             ctx.lineTo(to.x, to.y);
+            ctx.stroke();
           }
         }
-        ctx.stroke();
       }
+
+      // ⚫ Nodos (todos, normales, sin cambiar por la ruta)
+      nodes.forEach(node => {
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, 6, 0, 2 * Math.PI);
+
+        if (node.id >= 23 && node.id <= 138) {
+          ctx.fillStyle = "red"; // subnodo
+          ctx.fill();
+        } else {
+          ctx.fillStyle = "black"; // nodo principal
+          ctx.fill();
+
+          // Número
+          ctx.fillStyle = "yellow";
+          ctx.font = "bold 10px sans-serif";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(node.id, node.x, node.y);
+        }
+      });
 
       ctx.restore();
     }
 
-    function seleccionarNodoEnPosicion(clientX, clientY) {
-  const rect = canvas.getBoundingClientRect();
-  const x = (clientX - rect.left - offsetX) / scale;
-  const y = (clientY - rect.top - offsetY) / scale;
 
-  selectedNode = null;
-  const modoSubnodosActivo = btnSubnodos.classList.contains('active');
 
-  for (let node of currentNodes) {
-    const dx = node.x - x;
-    const dy = node.y - y;
-    if (Math.sqrt(dx * dx + dy * dy) < 10) {
-      selectedNode = node;
+    // Evento click para mostrar info en panel lateral
+    container.addEventListener('click', e => {
+      const rect = canvas.getBoundingClientRect();
+      const x = (e.clientX - rect.left - offsetX) / scale;
+      const y = (e.clientY - rect.top - offsetY) / scale;
 
-      if (modoSubnodosActivo && node.isSubnodo) {
+      const realX = Math.round(x);
+      const realY = Math.round(y);
+
+      console.log("📍 Coordenadas dentro del canvas:", realX, realY);
+
+      selectedNode = null;
+      for (let node of nodes) {
+        const dx = node.x - x;
+        const dy = node.y - y;
+        if (Math.sqrt(dx * dx + dy * dy) < 10) {
+
+          selectedNode = node;
+
+          // 🔎 Mostrar siempre el ID, incluso de subnodos
+          console.log("🟢 Nodo clickeado - ID:", node.id);
+
+          // Mostrar info solo si no es subnodo
+          if (node.id < 23 || node.id > 138) {
+            panelTitle.textContent = node.label;
+            panelInfo.textContent = node.info;
+
+            if (node.carreras.length > 0) {
+              const listaCarreras = node.carreras.map(c => `- ${c}`).join('<br>');
+              panelCarreras.innerHTML = `<strong>Carreras:</strong><br>${listaCarreras}`;
+            } else {
+              panelCarreras.innerHTML = '📌 Puedes guiarte con esta foto 😀';
+            }
+
+            if (node.img) {
+              panelImage.src = node.img;
+              panelImage.style.display = 'block';
+            } else {
+              panelImage.style.display = 'none';
+            }
+          } else {
+            // Si es subnodo, vaciar panel
+            panelTitle.textContent = 'Selecciona un nodo';
+            panelInfo.textContent = '';
+            panelCarreras.innerHTML = '';
+            panelImage.style.display = 'none';
+          }
+
+          break;
+        }
+      }
+
+      if (!selectedNode) {
         panelTitle.textContent = 'Selecciona un nodo';
         panelInfo.textContent = '';
         panelCarreras.innerHTML = '';
         panelImage.style.display = 'none';
-      } else {
-        panelTitle.textContent = node.label;
-        panelInfo.textContent = node.info;
-
-        if (node.carreras && node.carreras.length > 0) {
-          const listaCarreras = node.carreras.map(c => `- ${c}`).join('<br>');
-          panelCarreras.innerHTML = `<strong>Carreras:</strong><br>${listaCarreras}`;
-        } else {
-          panelCarreras.innerHTML = '📌 Puedes guiarte con esta foto 😀';
-        }
-
-        if (node.img) {
-          panelImage.src = node.img;
-          panelImage.style.display = 'block';
-        } else {
-          panelImage.style.display = 'none';
-        }
       }
 
-      break;
-    }
-  }
-
-  if (!selectedNode) {
-    panelTitle.textContent = 'Selecciona un nodo';
-    panelInfo.textContent = '';
-    panelCarreras.innerHTML = '';
-    panelImage.style.display = 'none';
-  }
-
-  draw();
-}
-
-container.addEventListener('touchend', e => {
-  if (e.changedTouches.length > 0) {
-    const touch = e.changedTouches[0];
-    seleccionarNodoEnPosicion(touch.clientX, touch.clientY);
-  }
-});
-
-    // Detectar click en nodos para mostrar info en panel lateral
-    container.addEventListener('click', e => {
-    seleccionarNodoEnPosicion(e.clientX, e.clientY);
-    const rect = canvas.getBoundingClientRect();
-    const x = (e.clientX - rect.left - offsetX) / scale;
-    const y = (e.clientY - rect.top - offsetY) / scale;
-
-    selectedNode = null;
-    const modoSubnodosActivo = btnSubnodos.classList.contains('active');
-
-    for (let node of currentNodes) {
-      const dx = node.x - x;
-      const dy = node.y - y;
-      if (Math.sqrt(dx * dx + dy * dy) < 10) {
-        selectedNode = node;
-
-        if (modoSubnodosActivo && node.isSubnodo) {
-          // En modo subnodos y clic en subnodo: no mostrar info, solo limpiar panel
-          panelTitle.textContent = 'Selecciona un nodo';
-          panelInfo.textContent = '';
-          panelCarreras.innerHTML = '';
-          panelImage.style.display = 'none';
-        } else {
-          // Mostrar info normal para nodos principales o en modo original
-          panelTitle.textContent = node.label;
-          panelInfo.textContent = node.info;
-
-          if (node.carreras && node.carreras.length > 0) {
-            const listaCarreras = node.carreras.map(c => `- ${c}`).join('<br>');
-            panelCarreras.innerHTML = `<strong>Carreras:</strong><br>${listaCarreras}`;
-          } else {
-            panelCarreras.innerHTML = '📌 Puedes guiarte con esta foto 😀';
-          }
-
-          if (node.img) {
-            panelImage.src = node.img;
-            panelImage.style.display = 'block';
-          } else {
-            panelImage.style.display = 'none';
-          }
-        }
-
-        break;
-      }
-    }
-
-    if (!selectedNode) {
-      panelTitle.textContent = 'Selecciona un nodo';
-      panelInfo.textContent = '';
-      panelCarreras.innerHTML = '';
-      panelImage.style.display = 'none';
-    }
-    draw();
+      draw();
     });
-    /**
-     * Función que genera subnodos intermedios en aristas que tienen tiempo > 1
-     * para dividir la arista en segmentos de 1 minuto (o unidad de tiempo).
-     * Crea nodos intermedios y nuevas aristas entre ellos.
-     * 
-     * @param {Object} data - Datos con nodos y aristas originales
-     * @param {Object} posiciones - Posiciones fijas para nodos originales
-     * @returns {Object} Nuevo grafo con nodos y aristas con subnodos incluidos
-     */
-    function generarSubnodosYNuevasAristas(data, posiciones) {
-    let nextId = Math.max(...data.nodes.map(n => n.id)) + 1; // ID para subnodos
 
-    const nuevosNodos = [];
-    const nuevasAristas = [];
+    // Algoritmo de Dijkstra para nodos principales (usa edges.weight)
+    function dijkstra(nodes, edges, startId, endId) {
+      const dist = {};
+      const prev = {};
+      const Q = new Set();
 
-     const aristasProcesadas = new Set();
-
-    const nodosOriginales = data.nodes.map(n => ({
-      ...n,
-      x: posiciones[n.id]?.x ?? 100,
-      y: posiciones[n.id]?.y ?? 100,
-      isSubnodo: false
-    }));
-
-    data.edges.forEach(edge => {
-      const aristaId = `${edge.from}-${edge.to}`;
-      if (aristasProcesadas.has(aristaId)) {
-        return;
-      }
-    aristasProcesadas.add(aristaId);
-      const fromNode = nodosOriginales.find(n => n.id === edge.from);
-      const toNode = nodosOriginales.find(n => n.id === edge.to);
-
-      if (!fromNode || !toNode) {
-        console.warn(`Arista con nodos no encontrados: from=${edge.from} to=${edge.to}`);
-        return;
-      }
-
-      let tiempo = parseInt(edge.time, 10);
-        if (isNaN(tiempo) || tiempo <= 1) {
-          tiempo = 1;
-        }
-
-      if (tiempo <= 1) {
-        nuevasAristas.push({
-          from: fromNode.id,
-          to: toNode.id,
-          label: edge.label,
-          weight: edge.weight,
-          time: edge.time
-        });
-        return;
-      }
-
-      // Crear subnodos intermedios
-       const subnodos = [];
-      for (let i = 1; i < tiempo; i++) {
-        const ratio = i / tiempo;
-        const x = fromNode.x + (toNode.x - fromNode.x) * ratio;
-        const y = fromNode.y + (toNode.y - fromNode.y) * ratio;
-        const subnodo = {
-          id: nextId++,
-          label: `Subnodo ${fromNode.id}-${toNode.id} #${i}`,
-          info: ``,
-          carreras: [],
-          img: null,
-          x,
-          y,
-          isSubnodo: true
-        };
-        subnodos.push(subnodo);
-      }
-
-      nuevosNodos.push(...subnodos);
-
-      nuevasAristas.push({
-        from: fromNode.id,
-        to: subnodos[0].id,
-        label: '',
-        weight: edge.weight / tiempo,
-        time: ''
+      // Inicializar distancias y conjunto Q con todos los nodos
+      nodes.forEach(n => {
+        dist[n.id] = Infinity;
+        prev[n.id] = null;
+        Q.add(n.id);  // TODOS los nodos
       });
 
-      for (let i = 0; i < subnodos.length - 1; i++) {
-        nuevasAristas.push({
-          from: subnodos[i].id,
-          to: subnodos[i + 1].id,
-          label: '',
-          weight: edge.weight / tiempo,
-          time: ''
+      dist[startId] = 0;
+
+      while (Q.size > 0) {
+        let u = null;
+        let minDist = Infinity;
+        Q.forEach(id => {
+          if (dist[id] < minDist) {
+            minDist = dist[id];
+            u = id;
+          }
+        });
+
+        if (u === null || u === endId) break;
+
+        Q.delete(u);
+
+        edges.forEach(edge => {
+          let neighbor = null;
+          if (edge.from === u && Q.has(edge.to)) neighbor = edge.to;
+          else if (edge.to === u && Q.has(edge.from)) neighbor = edge.from;
+
+          if (neighbor !== null) {
+            const alt = dist[u] + (edge.weight ?? 1);
+            if (alt < dist[neighbor]) {
+              dist[neighbor] = alt;
+              prev[neighbor] = u;
+            }
+          }
         });
       }
 
-      nuevasAristas.push({
-        from: subnodos[subnodos.length - 1].id,
-        to: toNode.id,
-        label: '',
-        weight: edge.weight / tiempo,
-        time: ''
-      });
-    });
+      // Reconstruir ruta
+      const path = [];
+      let u = endId;
+      if (prev[u] !== null || u === startId) {
+        while (u !== null) {
+          path.unshift(u);
+          u = prev[u];
+        }
+      }
+      return { path, distance: dist[endId] };
+    }
 
-    return {
-      nodes: [...nodosOriginales, ...nuevosNodos],
-      edges: nuevasAristas
-    };
-  }
-
-    // Función que carga el archivo JSON con nodos y aristas
-    async function loadData() {
+    // Carga datos JSON y prepara nodos y aristas
+    async function loadData(jsonFile) {
       try {
-        const res = await fetch('campus.json');
+        const res = await fetch(jsonFile);
         const data = await res.json();
 
-        // Preparar nodos originales con posiciones fijas
-        nodesOriginal = data.nodes.map(n => ({
-          ...n,
-          x: posiciones[n.id]?.x ?? 100,
-          y: posiciones[n.id]?.y ?? 100,
-          isSubnodo: false
-        }));
-        edgesOriginal = data.edges;
-
-        // Generar grafo con subnodos intermedios
-        const grafoSubnodos = generarSubnodosYNuevasAristas(data, posiciones);
-        nodesSubnodos = grafoSubnodos.nodes;
-        edgesSubnodos = grafoSubnodos.edges;
-
-        // Recuperar posiciones guardadas si existen
-        const posicionesGuardadasJSON = localStorage.getItem('posicionesSubnodos');
-        if (posicionesGuardadasJSON) {
-          const posicionesGuardadas = JSON.parse(posicionesGuardadasJSON);
-          grafoSubnodos.nodes.forEach(node => {
-            if (node.isSubnodo && posicionesGuardadas[node.id]) {
-              node.x = posicionesGuardadas[node.id].x;
-              node.y = posicionesGuardadas[node.id].y;
-            }
+        if (currentMode === 'facultades') {
+          nodes = data.nodes
+            .filter(n => n.carreras && n.carreras.length > 0)
+            .map(n => ({
+              ...n,
+              x: posiciones[n.id]?.x ?? 100,
+              y: posiciones[n.id]?.y ?? 100
+            }));
+        } else {
+          nodes = data.nodes.map(n => {
+            const fixed = fixedSubnodePositions[n.id];
+            return {
+              ...n,
+              x: fixed?.x ?? posiciones[n.id]?.x ?? 100,
+              y: fixed?.y ?? posiciones[n.id]?.y ?? 100
+            };
           });
         }
 
-        // Inicializar con grafo original
-        currentNodes = nodesOriginal;
-        currentEdges = edgesOriginal;
+        edges = data.edges;
 
-        // Ajustar escala mínima y máxima según tamaño del contenedor y la imagen
+        // Ajustar escalado inicial
         const scaleX = container.clientWidth / image.width;
         const scaleY = container.clientHeight / image.height;
         minScale = Math.max(scaleX, scaleY);
-        scale = minScale * 1.5;
         maxScale = minScale * 2;
+        scale = minScale * 1.5;
 
-        // Centrar la imagen en el contenedor
         offsetX = (container.clientWidth - image.width * scale) / 2;
         offsetY = (container.clientHeight - image.height * scale) / 2;
-
         clampOffset();
-        resizeCanvas();
 
+        resizeCanvas();
       } catch (e) {
         alert("❌ Error al cargar el archivo JSON: " + e.message);
       }
+      mostrarSelectorRuta();
     }
-    /**
-     * Cambia entre el modo de visualización 'original' y 'subnodos'
-     * Actualiza los nodos y aristas a dibujar, así como los estilos de botones
-     */
-    function cambiarGrafo(tipo) {
-      if (tipo === 'original') {
-        currentNodes = nodesOriginal;
-        currentEdges = edgesOriginal;
-        btnOriginal.classList.add('active');
-        btnSubnodos.classList.remove('active');
-        rutaPanel.style.display = 'none'; // Solo mostrar panel ruta en modo subnodos
-      } else if (tipo === 'subnodos') {
-        currentNodes = nodesSubnodos;
-        currentEdges = edgesSubnodos;
-        btnOriginal.classList.remove('active');
-        btnSubnodos.classList.add('active');
-        rutaPanel.style.display = 'block';
 
-        // Llenar selects con nodos principales
-        selectOrigen.innerHTML = '';
-        selectDestino.innerHTML = '';
-        const nodosPrincipales = nodesSubnodos.filter(n => !n.isSubnodo);
-        nodosPrincipales.forEach(node => {
-          const option1 = document.createElement('option');
-          option1.value = node.id;
-          option1.textContent = node.label;
-          selectOrigen.appendChild(option1);
+    function mostrarSelectorRuta() {
+      // Solo en modo encuentra
+      if (currentMode !== 'encuentra') {
+        // Remover si existen
+        const existing = document.getElementById('ruta-container');
+        if (existing) existing.remove();
+        return;
+      }
 
-          const option2 = document.createElement('option');
-          option2.value = node.id;
-          option2.textContent = node.label;
-          selectDestino.appendChild(option2);
+      // Crear contenedor
+      let container = document.getElementById('ruta-container');
+      if (!container) {
+        container = document.createElement('div');
+        container.id = 'ruta-container';
+        container.style.marginTop = '15px';
+        container.style.borderTop = '1px solid #ccc';
+        container.style.paddingTop = '10px';
+
+        // Selector inicio
+        const labelInicio = document.createElement('label');
+        labelInicio.textContent = 'Ruta inicio: ';
+        labelInicio.htmlFor = 'select-inicio';
+        container.appendChild(labelInicio);
+
+        const selectInicio = document.createElement('select');
+        selectInicio.id = 'select-inicio';
+        selectInicio.style.width = '100%';
+        selectInicio.style.marginBottom = '10px';
+        container.appendChild(selectInicio);
+
+        // Selector destino
+        const labelFin = document.createElement('label');
+        labelFin.textContent = 'Ruta destino: ';
+        labelFin.htmlFor = 'select-fin';
+        container.appendChild(labelFin);
+
+        const selectFin = document.createElement('select');
+        selectFin.id = 'select-fin';
+        selectFin.style.width = '100%';
+        selectFin.style.marginBottom = '10px';
+        container.appendChild(selectFin);
+
+        // Botón generar ruta
+        const btnGenerar = document.createElement('button');
+        btnGenerar.textContent = 'Generar ruta';
+        btnGenerar.style.width = '100%';
+        btnGenerar.style.padding = '10px';
+        btnGenerar.style.fontWeight = 'bold';
+        btnGenerar.style.cursor = 'pointer';
+        btnGenerar.style.borderRadius = '6px';
+        btnGenerar.style.backgroundColor = 'black';
+        btnGenerar.style.color = 'white';
+        btnGenerar.style.border = 'none';
+        btnGenerar.id = 'btn-generar-ruta';
+
+        container.appendChild(btnGenerar);
+
+        panelCarreras.parentNode.insertBefore(container, panelCarreras.nextSibling);
+
+        // Evento botón
+        btnGenerar.addEventListener('click', () => {
+          const startId = parseInt(selectInicio.value);
+          const endId = parseInt(selectFin.value);
+          if (isNaN(startId) || isNaN(endId)) {
+            alert('Selecciona ambos nodos para generar la ruta.');
+            return;
+          }
+          if (startId === endId) {
+            alert('Selecciona nodos diferentes.');
+            return;
+          }
+          generarRuta(startId, endId);
         });
       }
 
-      selectedNode = null;
-      panelTitle.textContent = 'Selecciona un nodo';
-      panelInfo.textContent = '';
-      panelCarreras.innerHTML = '';
-      panelImage.style.display = 'none';
+      // Rellenar selects con nodos principales
+      const selectInicio = document.getElementById('select-inicio');
+      const selectFin = document.getElementById('select-fin');
+      selectInicio.innerHTML = '';
+      selectFin.innerHTML = '';
 
-      clampOffset();
-      draw();
+      const principales = nodes.filter(n => n.id < 23 || n.id > 138);
+      principales.forEach(n => {
+        const option1 = document.createElement('option');
+        option1.value = n.id;
+        option1.textContent = `${n.label} (${n.id})`;
+        selectInicio.appendChild(option1);
+
+        const option2 = document.createElement('option');
+        option2.value = n.id;
+        option2.textContent = `${n.label} (${n.id})`;
+        selectFin.appendChild(option2);
+      });
     }
 
+    let routePath = []; // variable global para guardar ruta
 
-    // Asociar eventos a botones para cambiar modo
-    btnOriginal.addEventListener('click', () => cambiarGrafo('original'));
-    btnSubnodos.addEventListener('click', () => cambiarGrafo('subnodos'));
-    btnCalcularRuta.addEventListener('click', () => {
-    const origen = selectOrigen.value;
-    const destino = selectDestino.value;
-
-    if (!origen || !destino || origen === destino) {
-      alert("⚠️ Por favor, selecciona nodos distintos de origen y destino.");
-      return;
-    }
-
-    const path = dijkstra(currentNodes, currentEdges, origen, destino);
-
-    if (path.length === 0) {
-      alert("❌ No se encontró un camino.");
-      return;
-    }
-
-    // Calcular tiempo total sumando pesos de aristas entre nodos del path
-    let tiempoTotal = 0;
-    for (let i = 0; i < path.length - 1; i++) {
-      const from = path[i];
-      const to = path[i + 1];
-
-      // Buscar la arista que conecta estos dos nodos (en cualquiera de los sentidos)
-      const edge = currentEdges.find(e =>
-        (String(e.from) === String(from) && String(e.to) === String(to)) ||
-        (String(e.to) === String(from) && String(e.from) === String(to))
-      );
-
-      if (edge) {
-        const peso = parseFloat(edge.weight);
-        const pesoValido = (!isNaN(peso) && peso > 0) ? peso : 1;
-        tiempoTotal += pesoValido;
-      } else {
-        // Si no encuentra la arista, sumar 0 o manejar error si quieres
+    function generarRuta(startId, endId) {
+      const result = dijkstra(nodes, edges, startId, endId);
+      if (result.path.length === 0) {
+        alert('No se encontró ruta entre los nodos seleccionados.');
+        return;
       }
+
+      routePath = result.path; // guardamos ruta para dibujar
+
+      // Mostrar tiempo total (peso)
+      panelInfo.textContent = `Tiempo estimado total: ${result.distance} minutos`;
+
+      draw(); // redibujar canvas incluyendo ruta en verde
     }
 
-    // Mostrar tiempo total en el panel
-    const tiempoRutaElem = document.getElementById('tiempo-ruta');
-    tiempoRutaElem.textContent = `⏱ Tiempo estimado: ${tiempoTotal.toFixed(2)} minutos`;
-    tiempoRutaElem.style.display = 'block';
 
-    // Dibujar ruta
-    draw();
 
-    ctx.save();
-    ctx.translate(offsetX, offsetY);
-    ctx.scale(scale, scale);
-    ctx.strokeStyle = 'green';
-    ctx.lineWidth = 4;
-    ctx.beginPath();
 
-    for (let i = 0; i < path.length - 1; i++) {
-      const from = currentNodes.find(n => n.id == path[i]);
-      const to = currentNodes.find(n => n.id == path[i + 1]);
-      if (from && to) {
-        ctx.moveTo(from.x, from.y);
-        ctx.lineTo(to.x, to.y);
-      }
-    }
-
-    ctx.stroke();
-    ctx.restore();
-    ultimaRuta = path; // Guardar la ruta para que se dibuje después
-
-    draw();
-
-    alert("✅ Ruta generada con éxito.");
-  });
-    // Cuando la imagen de fondo se carga, iniciar carga de datos y dibujo
+    // Esperar a que la imagen cargue para iniciar todo
     image.onload = () => {
-      loadData();
+      if (currentMode === 'facultades') {
+        loadData('campus.json');
+      } else {
+        loadData('rutas.json');
+      }
     };
-
-    // Algoritmo de Dijkstra
-    function dijkstra(nodes, edges, startId, endId) {
-    // Convertir IDs a string para uniformidad
-    startId = String(startId);
-    endId = String(endId);
-
-    const dist = {};
-    const prev = {};
-    const visited = new Set();
-
-    // Inicializar distancias
-    for (let node of nodes) {
-      dist[String(node.id)] = Infinity;
-      prev[String(node.id)] = null;
-    }
-
-    dist[startId] = 0;
-
-    while (visited.size < nodes.length) {
-      // Encontrar nodo no visitado con distancia mínima
-      let u = null;
-      let minDist = Infinity;
-
-      for (let id in dist) {
-        if (!visited.has(id) && dist[id] < minDist) {
-          minDist = dist[id];
-          u = id;
-        }
-      }
-
-      if (u === null) break; // No quedan nodos accesibles
-
-      // Si ya llegamos al destino, rompemos el ciclo
-      if (u === endId) break;
-
-      visited.add(u);
-
-      // Revisar vecinos (aristas que parten o llegan a u para grafo no dirigido)
-      for (let edge of edges) {
-        // Normalizar IDs de arista
-        const from = String(edge.from);
-        const to = String(edge.to);
-
-        let neighbor = null;
-        if (from === u) {
-          neighbor = to;
-        } else if (to === u) {
-          neighbor = from; // Grafo no dirigido: considerar aristas inversas también
-        }
-
-        if (neighbor && !visited.has(neighbor)) {
-          const peso = parseFloat(edge.weight);
-          const pesoValido = (!isNaN(peso) && peso > 0) ? peso : 1;
-
-          const alt = dist[u] + pesoValido;
-
-          if (alt < dist[neighbor]) {
-            dist[neighbor] = alt;
-            prev[neighbor] = u;
-          }
-        }
-      }
-    }
-
-    // Reconstruir camino
-    const path = [];
-    let u = endId;
-    while (u !== null) {
-      path.unshift(u);
-      u = prev[u];
-    }
-
-    if (path[0] !== startId) return []; // No hay camino
-
-    return path;
-  }
-
-  // --- Variables para tocar y gestos táctiles ---
-let lastTouchDistance = null;
-let lastTouchCenter = null;
-let isTouchDragging = false;
-let lastTouchPos = { x: 0, y: 0 };
-
-// Función para calcular distancia entre dos dedos
-function getDistance(touches) {
-  const dx = touches[0].clientX - touches[1].clientX;
-  const dy = touches[0].clientY - touches[1].clientY;
-  return Math.sqrt(dx * dx + dy * dy);
-}
-
-// Función para calcular centro entre dos dedos
-function getCenter(touches) {
-  return {
-    x: (touches[0].clientX + touches[1].clientX) / 2,
-    y: (touches[0].clientY + touches[1].clientY) / 2
-  };
-}
-
-container.addEventListener('touchstart', e => {
-  e.preventDefault();
-
-  if (e.touches.length === 1) {
-    // Inicio drag con un dedo
-    isTouchDragging = true;
-    lastTouchPos.x = e.touches[0].clientX;
-    lastTouchPos.y = e.touches[0].clientY;
-  } else if (e.touches.length === 2) {
-    // Inicio pinch zoom con dos dedos
-    isTouchDragging = false;
-    lastTouchDistance = getDistance(e.touches);
-    lastTouchCenter = getCenter(e.touches);
-  }
-});
-
-container.addEventListener('touchmove', e => {
-  e.preventDefault();
-
-  if (e.touches.length === 1 && isTouchDragging) {
-    // Mover (pan) con un dedo
-    const touch = e.touches[0];
-    const dx = touch.clientX - lastTouchPos.x;
-    const dy = touch.clientY - lastTouchPos.y;
-
-    offsetX += dx;
-    offsetY += dy;
-    clampOffset();
-
-    lastTouchPos.x = touch.clientX;
-    lastTouchPos.y = touch.clientY;
-
-    draw();
-
-  } else if (e.touches.length === 2) {
-    // Pinch zoom
-    const newDistance = getDistance(e.touches);
-    const newCenter = getCenter(e.touches);
-
-    if (lastTouchDistance) {
-      const deltaDistance = newDistance - lastTouchDistance;
-      const zoomFactor = 0.005;
-
-      // Ajustar escala con delta distancia
-      let newScale = scale * (1 + zoomFactor * deltaDistance);
-
-      // Limitar escala
-      newScale = Math.min(maxScale, Math.max(minScale, newScale));
-
-      // Ajustar offset para zoom en el centro de los dedos
-      const rect = canvas.getBoundingClientRect();
-
-      // Coordenadas relativas sin zoom
-      const relativeX = (lastTouchCenter.x - rect.left - offsetX) / scale;
-      const relativeY = (lastTouchCenter.y - rect.top - offsetY) / scale;
-
-      // Actualizar escala y offsetX, offsetY para mantener zoom centrado
-      offsetX = lastTouchCenter.x - rect.left - relativeX * newScale;
-      offsetY = lastTouchCenter.y - rect.top - relativeY * newScale;
-
-      scale = newScale;
-      clampOffset();
-      draw();
-    }
-
-    lastTouchDistance = newDistance;
-    lastTouchCenter = newCenter;
-  }
-});
-
-container.addEventListener('touchend', e => {
-  e.preventDefault();
-
-  if (e.touches.length < 2) {
-    lastTouchDistance = null;
-    lastTouchCenter = null;
-  }
-  if (e.touches.length === 0) {
-    isTouchDragging = false;
-  }
-});
-
   </script>
-  
 </body>
 </html>
