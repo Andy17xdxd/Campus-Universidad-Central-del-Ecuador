@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Campus UCE</title>
   <style>
     body {
@@ -102,6 +102,43 @@
       color: white;
       border: 1px solid black;
     }
+
+    @media (max-width: 768px) {
+  h1 {
+    font-size: 24px;
+    padding: 15px 0;
+  }
+
+  .container {
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .canvas-wrapper {
+    width: 100%;
+    height: 250px; /* Menor alto en móviles */
+    touch-action: none;
+  }
+
+  .info-panel {
+    width: 90%;
+    font-size: 13px;
+    padding: 10px;
+  }
+
+  .modo-btn {
+    padding: 8px 15px;
+    font-size: 13px;
+    margin: 5px 2px;
+  }
+
+  #ruta-container select,
+  #btn-generar-ruta {
+    font-size: 14px;
+  }
+}
 
   </style>
 </head>
@@ -476,79 +513,68 @@
 
       ctx.restore();
     }
-let lastDist = 0;
-let pinchCenter = { x: 0, y: 0 };
 
-// Detectar inicio de gesto multitouch
+let lastTouchDist = null;
+
+// Iniciar toque
 container.addEventListener('touchstart', e => {
-  if (e.touches.length === 2) {
-    e.preventDefault();
-    lastDist = getDist(e.touches[0], e.touches[1]);
-    pinchCenter = getCenter(e.touches[0], e.touches[1]);
+  if (e.touches.length === 1) {
+    isDragging = true;
+    const touch = e.touches[0];
+    startDrag.x = touch.clientX - offsetX;
+    startDrag.y = touch.clientY - offsetY;
+  } else if (e.touches.length === 2) {
+    isDragging = false;
+    lastTouchDist = getTouchDistance(e.touches);
   }
 }, { passive: false });
 
-// Manejar zoom con gesto pinch
+// Mover toque
 container.addEventListener('touchmove', e => {
-  if (e.touches.length === 2) {
-    e.preventDefault();
-    const dist = getDist(e.touches[0], e.touches[1]);
-    const rect = canvas.getBoundingClientRect();
-
-    const zoomFactor = dist / lastDist;
-    lastDist = dist;
-
-    const xRel = (pinchCenter.x - rect.left - offsetX) / scale;
-    const yRel = (pinchCenter.y - rect.top - offsetY) / scale;
-
-    scale *= zoomFactor;
-    scale = Math.min(maxScale, Math.max(minScale, scale));
-
-    offsetX = pinchCenter.x - rect.left - xRel * scale;
-    offsetY = pinchCenter.y - rect.top - yRel * scale;
-
-    clampOffset();
-    draw();
-  } else if(e.touches.length === 1 && !draggingSubnode){
   e.preventDefault();
-  const touch = e.touches[0];
-  if (!isDragging) {
-    isDragging = true;
-    startDrag.x = touch.clientX - offsetX;
-    startDrag.y = touch.clientY - offsetY;
-  } else {
+  if (e.touches.length === 1 && isDragging) {
+    const touch = e.touches[0];
     offsetX = touch.clientX - startDrag.x;
     offsetY = touch.clientY - startDrag.y;
     clampOffset();
     draw();
-  }
-}
+  } else if (e.touches.length === 2) {
+    const currentDist = getTouchDistance(e.touches);
+    if (lastTouchDist !== null) {
+      const delta = currentDist - lastTouchDist;
+      const zoomFactor = delta * 0.005;
+      const rect = canvas.getBoundingClientRect();
+      const centerX = (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left;
+      const centerY = (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top;
 
+      const worldX = (centerX - offsetX) / scale;
+      const worldY = (centerY - offsetY) / scale;
+
+      scale *= (1 + zoomFactor);
+      scale = Math.min(maxScale, Math.max(minScale, scale));
+      offsetX = centerX - worldX * scale;
+      offsetY = centerY - worldY * scale;
+
+      clampOffset();
+      draw();
+    }
+    lastTouchDist = currentDist;
+  }
 }, { passive: false });
 
-function getDist(touch1, touch2) {
-  const dx = touch2.clientX - touch1.clientX;
-  const dy = touch2.clientY - touch1.clientY;
+// Finalizar toque
+container.addEventListener('touchend', e => {
+  if (e.touches.length < 2) lastTouchDist = null;
+  if (e.touches.length === 0) isDragging = false;
+}, { passive: false });
+
+// Función para distancia entre dos dedos
+function getTouchDistance(touches) {
+  const dx = touches[0].clientX - touches[1].clientX;
+  const dy = touches[0].clientY - touches[1].clientY;
   return Math.sqrt(dx * dx + dy * dy);
 }
 
-function getCenter(touch1, touch2) {
-  return {
-    x: (touch1.clientX + touch2.clientX) / 2,
-    y: (touch1.clientY + touch2.clientY) / 2
-  };
-}
-
-// Evento touch para tap en móviles
-container.addEventListener('touchend', e => {
-  if (e.changedTouches.length > 0) {
-    const touch = e.changedTouches[0];
-    seleccionarNodoEnPosicion(touch.clientX, touch.clientY);
-  } else if (e.touches.length === 0) {
-    isDragging = false;
-    draggingSubnode = null;
-  }
-});
 
     // Evento click para mostrar info en panel lateral
     container.addEventListener('click', e => {
