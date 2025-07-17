@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Campus UCE</title>
   <style>
     body {
@@ -475,8 +476,79 @@
 
       ctx.restore();
     }
+let lastDist = 0;
+let pinchCenter = { x: 0, y: 0 };
 
+// Detectar inicio de gesto multitouch
+container.addEventListener('touchstart', e => {
+  if (e.touches.length === 2) {
+    e.preventDefault();
+    lastDist = getDist(e.touches[0], e.touches[1]);
+    pinchCenter = getCenter(e.touches[0], e.touches[1]);
+  }
+}, { passive: false });
 
+// Manejar zoom con gesto pinch
+container.addEventListener('touchmove', e => {
+  if (e.touches.length === 2) {
+    e.preventDefault();
+    const dist = getDist(e.touches[0], e.touches[1]);
+    const rect = canvas.getBoundingClientRect();
+
+    const zoomFactor = dist / lastDist;
+    lastDist = dist;
+
+    const xRel = (pinchCenter.x - rect.left - offsetX) / scale;
+    const yRel = (pinchCenter.y - rect.top - offsetY) / scale;
+
+    scale *= zoomFactor;
+    scale = Math.min(maxScale, Math.max(minScale, scale));
+
+    offsetX = pinchCenter.x - rect.left - xRel * scale;
+    offsetY = pinchCenter.y - rect.top - yRel * scale;
+
+    clampOffset();
+    draw();
+  } else if(e.touches.length === 1 && !draggingSubnode){
+  e.preventDefault();
+  const touch = e.touches[0];
+  if (!isDragging) {
+    isDragging = true;
+    startDrag.x = touch.clientX - offsetX;
+    startDrag.y = touch.clientY - offsetY;
+  } else {
+    offsetX = touch.clientX - startDrag.x;
+    offsetY = touch.clientY - startDrag.y;
+    clampOffset();
+    draw();
+  }
+}
+
+}, { passive: false });
+
+function getDist(touch1, touch2) {
+  const dx = touch2.clientX - touch1.clientX;
+  const dy = touch2.clientY - touch1.clientY;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
+function getCenter(touch1, touch2) {
+  return {
+    x: (touch1.clientX + touch2.clientX) / 2,
+    y: (touch1.clientY + touch2.clientY) / 2
+  };
+}
+
+// Evento touch para tap en móviles
+container.addEventListener('touchend', e => {
+  if (e.changedTouches.length > 0) {
+    const touch = e.changedTouches[0];
+    seleccionarNodoEnPosicion(touch.clientX, touch.clientY);
+  } else if (e.touches.length === 0) {
+    isDragging = false;
+    draggingSubnode = null;
+  }
+});
 
     // Evento click para mostrar info en panel lateral
     container.addEventListener('click', e => {
