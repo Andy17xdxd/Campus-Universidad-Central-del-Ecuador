@@ -3,50 +3,50 @@
     {
       "id": 1,
       "label": "Facultad de Jurisprudencia",
-      "info": "Aulas: 28. Edificio: 2 bloques (1 de 2 pisos, 2 de 3 pisos).",
-      "carreras": ["Derecho"],
+      "info": "Aulas: 28. Edificio: 2 bloques (1 de 2 pisos, 2 de 3 pisos). Tiempo desde metro: 5 min, entrada principal: 12 min.",
+      "carreras": ["Derecho","Ciencias Policiales"],
       "img": "img/jurisprudencia.jpg"
     },
     {
       "id": 2,
       "label": "Facultad de Ciencias Psicológicas",
       "info": "Edificios: Matriz (3 pisos, 16 aulas), Capsi (2 pisos, 2 aulas). Tiempos entrada: metro 15 min, principal 12 min.",
-      "carreras": ["Psicología Clínica", "Psicología Organizacional"],
+      "carreras": ["Licenciatura en Psicología Clínica", "Licenciatura en Psicología Educativa","Licenciatura en Psicologia (No Vigente)"],
       "img": "img/psicologia.jpg"
     },
     {
       "id": 3,
-      "label": "Facultad de Arquitectura",
+      "label": "Facultad de Arquitectura y Urbanismo",
       "info": "20 aulas. Hall principal y secundario. Servicios: salas de exposición, aula audiovisual.",
-      "carreras": ["Arquitectura", "Diseño Urbano"],
+      "carreras": ["Arquitectura"],
       "img": "img/arquitectura.jpg"
     },
     {
       "id": 4,
       "label": "Facultad de Ciencias Agrícolas",
       "info": "5 pisos. Laboratorios: nutrición animal, biotecnología vegetal. Invernadero para botánica.",
-      "carreras": ["Agronomía", "Biotecnología Agrícola"],
+      "carreras": ["Agronomía", "Turismo"],
       "img": "img/agricolas.jpg"
     },
     {
       "id": 5,
       "label": "Facultad de Ciencias Químicas",
       "info": "3 edificios. Laboratorios: química analítica, farmacología, microbiología.",
-      "carreras": ["Química", "Bioquímica", "Farmacia"],
+      "carreras": ["Química", "Bioquímica y Farmacia", "No Vigentes: Bioquimica Clinica, Quimica de Alimentos, Quimica Farmaceutica"],
       "img": "img/quimicas.jpg"
     },
     {
       "id": 6,
       "label": "Facultad de Ingeniería en Geología, Minas, Petróleos y Ambiental (FIGEMPA)",
       "info": "Edificio principal con laboratorios. Carreras de geociencias.",
-      "carreras": ["Geología", "Ingeniería de Minas", "Ingeniería Ambiental"],
+      "carreras": ["Geología", "Ingeniería de Minas", "Ingeniería Ambiental","Ingeniería de Petróleos"],
       "img": "img/figempa.jpg"
     },
     {
       "id": 7,
       "label": "Facultad de Ingeniería y Ciencias Aplicadas",
       "info": "Edificios: Resistencia de Materiales, Suelos, Aulas, Hidráulica.",
-      "carreras": ["Ingeniería Civil", "Ingeniería Informática"],
+      "carreras": ["Ingeniería Civil", "Diseño Industrial","Sistemas de Información","Computación","Ingeniería Mecánica"],
       "img": "img/ingenieria.jpg"
     },
     {
@@ -60,21 +60,21 @@
       "id": 9,
       "label": "Facultad de Ciencias Sociales y Humanas",
       "info": "4 edificios con aulas y laboratorios.",
-      "carreras": ["Trabajo Social", "Sociología", "Historia"],
+      "carreras": ["Trabajo Social", "Sociología", "Historia","Política"],
       "img": "img/sociales.jpg"
     },
     {
       "id": 10,
       "label": "Facultad de Artes",
       "info": "Talleres de artes plásticas, salas de ensayo, teatro universitario.",
-      "carreras": ["Artes Plásticas", "Música", "Danza", "Teatro"],
+      "carreras": ["Artes Plásticas", "Artes Musicales", "Danza", "Artes Escénicas"],
       "img": "img/artes.jpg"
     },
     {
       "id": 11,
       "label": "Facultad de Ciencias",
       "info": "Edificio de Ciencias Básicas con laboratorios.",
-      "carreras": ["Matemática", "Física", "Ciencias de Datos"],
+      "carreras": ["Ingenieria Matemática", "Matemática", "Ciencias de Datos e Inteligencia Artificial"],
       "img": "img/ciencias.jpg"
     },
     {
@@ -86,23 +86,26 @@
     },
     {
       "id": 13,
-      "label": "Facultad de Filosofía",
+      "label": "Facultad de Filosofía, Letras y Ciencias de la Educación",
       "info": "6 pisos con distribución por carreras.",
-      "carreras": ["Filosofía", "Pedagogía"],
+      "carreras": ["Educación Inicial","Pedagogía en Idiomas","Filosofía", "Pedagogía Educativa y Orientación"
+    ,"Pedagogía de la Historia y las Ciencias Sociales","Comercio y Administración","Pedagogía en Química y Biología"
+  ,"Pedagogía Informática","Pedagogía en Matemáticas y Física","Pedagogía de la Lengua y Literatura","Psicopedagogía"
+,"Educación Básica","Pedagogía Técnica de la Mecatrónica"],
       "img": "img/filosofia.jpg"
     },
     {
       "id": 14,
       "label": "Facultad de Ingeniería Química",
       "info": "12 laboratorios especializados y planta piloto.",
-      "carreras": ["Ingeniería Química", "Ingeniería en Alimentos"],
+      "carreras": ["Ingeniería Química"],
       "img": "img/ingenieria_quimica.jpg"
     },
     {
       "id": 15,
-      "label": "Facultad de Economía",
+      "label": "Facultad de Ciencias Económicas",
       "info": "Laboratorio de simulación económica.",
-      "carreras": ["Economía", "Finanzas", "Comercio Exterior"],
+      "carreras": ["Economía", "Licenciatura en Finanzas", "Comercio Exterior", "Ingeniería en Estadística"],
       "img": "img/economia.jpg"
     },
     {
@@ -163,20 +166,20 @@
   { "from": 2, "to": 16, "label": "Facultad de Ciencias Psicológicas-Facultad de Comunicación Social", "weight": 60, "time": "3 min" },
   { "from": 3, "to": 11, "label": "Facultad de Arquitectura-Facultad de Ciencias", "weight": 3, "time": "3 min" },
   { "from": 3, "to": 10, "label": "Facultad de Arquitectura-Facultad de Artes", "weight": 5, "time": "5 min" },
-  { "from": 4, "to": 12, "label": "Facultad de Ciencias Agrícolas-Facultad de Medicina Veterinaria", "weight": 1, "time": "1 min" },
+  { "from": 4, "to": 12, "label": "Facultad de Ciencias Agrícolas-Facultad de Medicina Veterinaria", "weight": 2, "time": "2 min" },
   { "from": 4, "to": 6, "label": "Facultad de Ciencias Agrícolas-Facultad de Ingeniería en Geología, Minas, Petróleos y Ambiental (FIGEMPA)", "weight": 2, "time": "2 min" },
   { "from": 5, "to": 7, "label": "Facultad de Ciencias Químicas-Facultad de Ingeniería y Ciencias Aplicadas", "weight": 2, "time": "2 min" },
-  { "from": 5, "to": 6, "label": "Facultad de Ciencias Químicas-Facultad de Ingeniería en Geología, Minas, Petróleos y Ambiental (FIGEMPA)", "weight": 1, "time": "1 min" },
+  { "from": 5, "to": 6, "label": "Facultad de Ciencias Químicas-Facultad de Ingeniería en Geología, Minas, Petróleos y Ambiental (FIGEMPA)", "weight": 2, "time": "2 min" },
   { "from": 6, "to": 12, "label": "Facultad de Ingeniería en Geología, Minas, Petróleos y Ambiental (FIGEMPA)-Facultad de Medicina Veterinaria", "weight": 2, "time": "2 min" },
   { "from": 8, "to": 15, "label": "Facultad de Odontología-Facultad de Economía", "weight": 5, "time": "5 min" },
-  { "from": 8, "to": 16, "label": "Facultad de Odontología-Facultad de Comunicacion Social", "weight": 9, "time": "9 min" },
+  { "from": 8, "to": 16, "label": "Facultad de Odontología-Facultad de Comunicacion Social", "weight": 14, "time": "14 min" },
   { "from": 8, "to": 3, "label": "Facultad de Odontología-Facultad de Arquitectura", "weight": 6, "time": "6 min" },
   { "from": 9, "to": 7, "label": "Facultad de Ciencias Sociales y Humanas-Facultad de Ingenieria y Ciencias Aplicadas", "weight": 8, "time": "8 min" },
   { "from": 10, "to": 16, "label": "Facultad de Artes-Facultad de Comunicación Social", "weight": 4, "time": "4 min" },
   { "from": 11, "to": 10, "label": "Facultad de Ciencias-Facultad de Artes", "weight": 4, "time": "4 min" },
   { "from": 11, "to": 12, "label": "Facultad de Ciencias-Facultad de Veterinaria", "weight": 4, "time": "4 min" },
   { "from": 11, "to": 7, "label": "Facultad de Ciencias - Facultad de Ingeniería y Ciencias Aplicadas", "weight": 3, "time": "3 min" },
-  { "from": 11, "to": 5, "label": "Facultad de Ingeniería y Ciencias Aplicadas-Facultad Ciencias", "weight": 4, "time": "4 min" },
+  { "from": 11, "to": 6, "label": "Facultad de Ingeniería y Ciencias Aplicadas-Facultad Ciencias", "weight": 4, "time": "4 min" },
   { "from": 13, "to": 9, "label": "Facultad de Filosofía-Facultad de Ciencias Sociales y Humanas", "weight": 2, "time": "2 min" },
   { "from": 14, "to": 2, "label": "Facultad de Ingeniería Química-Facultad de Ciencias Psicológicas", "weight": 7, "time": "7 min" },
   { "from": 14, "to": 16, "label": "Facultad de Ingeniería Química-Facultad de Comunicación Social", "weight": 8, "time": "8 min" },
